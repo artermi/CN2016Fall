@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
 			int stlength = strlen(argv[i]);
 			for(int k = 1; k < stlength; k++){
 				if(*argv[i] != ':'){
-					printf("%d %d %c\n",argv[i],&(argv[i][0]),argv[i][0]);
+//					printf("%d %d %c\n",argv[i],&(argv[i][0]),argv[i][0]);
 					argv[i] ++;
 				}
 				else{
@@ -24,16 +24,12 @@ int main(int argc, char* argv[]){
 					break;
 				}
 			}
-
 			host[host_num] = argv[i];
 			host_num ++;
 		}
 	}
-	while(1){
-		int j;
-		scanf("%d",&j);
-		printf("%s\n",host[j]);
-	}
+
+
 	
 	return 0;
 }
