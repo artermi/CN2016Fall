@@ -14,7 +14,7 @@ all: $(TARGET)
 	@$(GCC) $< -c $(CFLAG) 
 
 clean:
-	rm -rf *.o
+	rm -rf *.o *.c~ Makefile~
 	@for bin in $(TARGET); do\
 		echo "rm -rf $$bin"; \
 		rm -rf $$bin; \
