@@ -26,7 +26,7 @@ int main(int argc, char** argv){
 
 	struct sockaddr_in cli;//the client or sth else.
 	int cli_len = sizeof(cli);
-	int new_fd = accept(socket_fd, (struct sockaddr*) &cli,cli_len);
+	int new_fd = accept(socket_fd, (struct sockaddr*) &cli,&cli_len);
 	if(new_fd < 0){
 		perror("No accept!! 666 Satan!!!");
 		exit(1);

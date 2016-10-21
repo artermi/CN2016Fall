@@ -1,9 +1,9 @@
-TARGET = server client
+TARGET = pj_server pj_client
 GCC = gcc
 CFLAGS = -std=c99 -g
 
-SERVER_OBJ=server.o
-CLIENT_OBJ=client.o
+SERVER_OBJ=server.o common.o
+CLIENT_OBJ=client.o common.o
 LIB=-lm -lbsm
 .PHONY:clean
 
@@ -14,15 +14,15 @@ all: $(TARGET)
 	@$(GCC) $< -c $(CFLAG) 
 
 clean:
-	rm -rf *.o *.c~ Makefile~
+	rm -rf *.o *.c~ Makefile~ *.h~
 	@for bin in $(TARGET); do\
 		echo "rm -rf $$bin"; \
 		rm -rf $$bin; \
 	done
-server: $(SERVER_OBJ)
+pj_server: $(SERVER_OBJ)
 	@echo "making: "$@
 	@$(GCC) -o $@ $(CFLAG) $(SERVER_OBJ)
-client: $(CLIENT_OBJ)
+pj_client: $(CLIENT_OBJ)
 	@echo "making: "$@
 	@$(GCC) -o $@ $(CFLAG) $(CLIENT_OBJ)
 

@@ -12,4 +12,12 @@
 #include <dirent.h>
 #include <utime.h>
 #include <pthread.h>
+#include <ctype.h>
 
+struct Servers_addr{
+	char *addr;
+	int port;
+};
+
+struct Servers_addr* turn_to_server_struct(char* intup);
+int is_addr(char *input);
