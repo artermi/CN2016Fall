@@ -9,6 +9,7 @@ LIB=-lm -lbsm
 
 all: $(TARGET)
 
+
 %.o: %.c
 	@echo "making: " $@
 	@$(GCC) $< -c $(CFLAG) 
