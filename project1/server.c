@@ -18,9 +18,16 @@ int main(int argc, char** argv){
 		exit(1);
 	}
 
+
+
 	if (listen(socket_fd, 1024) < 0){
 		close(socket_fd);
 		perror("Up yours!! no listen!!!");
+		exit(1);
+	}
+
+	if(show_my_IP_address(socket_fd,my_port) == 0){
+		perror("Yo mama so fat!! don't know the IP address!!");
 		exit(1);
 	}
 

@@ -16,3 +16,13 @@ int is_addr(char *input){
 	}
 	return to_ret;
 }
+
+int show_my_IP_address(int sock_fd,int port){
+	struct ifreq ifr;
+	ifr.ifr_addr.sa_family = AF_INET;
+	strncpy(ifr.ifr_name,"net0",IFNAMSIZ-1);
+
+	ioctl(sock_fd,SIOCGIFADDR,&ifr);
+	return(printf("%s:%d\n",inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr) -> sin_addr),port));
+	//Refered from  geekpage.jp/en/programming/linux-network/get-i[addr.php	
+}

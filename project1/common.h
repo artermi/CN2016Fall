@@ -13,6 +13,8 @@
 #include <utime.h>
 #include <pthread.h>
 #include <ctype.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
 
 struct Servers_addr{
 	char *addr;
@@ -21,3 +23,4 @@ struct Servers_addr{
 
 struct Servers_addr* turn_to_server_struct(char* intup);
 int is_addr(char *input);
+int show_my_IP_address(int sock_fd,int port);
