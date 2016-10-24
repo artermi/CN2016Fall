@@ -38,6 +38,7 @@ int main(int argc, char** argv){
 		perror("No accept!! 666 Satan!!!");
 		exit(1);
 	}
-
+	
+	close(socket_fd);
 	return 0;
 }
