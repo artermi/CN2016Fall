@@ -15,10 +15,17 @@
 #include <ctype.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+//for threading
+#include <pthread.h>
 
 struct Servers_addr{
 	char *addr;
 	int port;
+};
+
+struct working_data{
+	int pak_num;
+	char* the_host;
 };
 
 struct Servers_addr* turn_to_server_struct(char* intup);

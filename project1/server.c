@@ -33,13 +33,12 @@ int main(int argc, char** argv){
 
 	struct sockaddr_in cli;//the client or sth else.
 	int cli_len = sizeof(cli);
+	sleep(10);
 	int new_fd = accept(socket_fd, (struct sockaddr*) &cli,&cli_len);
 	if(new_fd < 0){
 		perror("No accept!! 666 Satan!!!");
 		exit(1);
 	}
-
-	sleep(10);
 	///to read_in the data
 	int nbytes;
 	char buf[512];
@@ -50,7 +49,7 @@ int main(int argc, char** argv){
 	else{
 		printf("%s\n",buf);
 	}
-	
+	close(new_fd);
 	close(socket_fd);
 	return 0;
 }
