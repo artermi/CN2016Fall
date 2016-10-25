@@ -1,10 +1,13 @@
 #include "common.h"
+#include <sys/time.h>
+#include <unistd.h>
+
+int num = 0,tout = 1000;//int number and timeout
 
 int main(int argc, char* argv[]){
 //./client [-n number] [-t time] host_1:IP host_2:IP
 //
 //=====================readin=======================
-	int num = 0,tout = 1000;//int number and timeout
 	int host_num = 0;
 	char* host[argc];
 	for(int i = 1; i < argc; i++){
@@ -48,7 +51,45 @@ int main(int argc, char* argv[]){
 			perror("Rotten vagina!! connect fail");
 			exit(1);
 	}
-	
+/* now we connected with server herald!!
+*/
+//set the timer
+	fd_set fdset;
+	struct timeval tv;
+	FD_ZERO(&fdset);
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	if(tout != 1000){
+		tv.tv_sec = 0;
+		tv.tv_usec = tout * 1000;
+	}
+	if(select(socket_fd + 1,NULL,&fdset,NULL,&tv) == 1){
+		int so_error;
+		socklen_t len = sizeof(so_error);
+		getsockopt(socket_fd,SOL_SOCKET,SO_ERROR,&so_error,&len);
+		if(so_error == 0){
+			printf("the address is open!!\n");
+			char buf[512] ="12345";
+			int nbytes;
+			if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
+				perror("write error");
+				exit(1);
+			}
+			
+		}
+	}
+	else{
+		printf("timeout\n");
+		close(socket_fd);
+	}
 
+/*	
+	char buf[512] ="12345";
+	int nbytes;
+	if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
+		perror("write error");
+		exit(1);
+	}
+*/
 	return 0;
 }

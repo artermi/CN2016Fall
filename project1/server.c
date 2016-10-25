@@ -38,6 +38,18 @@ int main(int argc, char** argv){
 		perror("No accept!! 666 Satan!!!");
 		exit(1);
 	}
+
+	sleep(10);
+	///to read_in the data
+	int nbytes;
+	char buf[512];
+	if(nbytes = read(new_fd,buf,sizeof(buf)) <0){
+		perror("read in fail!!");
+		exit(1);
+	}
+	else{
+		printf("%s\n",buf);
+	}
 	
 	close(socket_fd);
 	return 0;
