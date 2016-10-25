@@ -52,7 +52,7 @@ void* working_thread(void * data){
 	struct working_data* local_data = (struct working_data*) data;
 	int  pack_num = local_data -> pak_num;
 	char* my_host = local_data -> the_host;
-	printf("ping %s\n",pack_num,my_host);
+	printf("ping %s\n",my_host);
 
 	int socket_fd;
 	if ((socket_fd = socket(AF_INET,SOCK_STREAM, 0))  < 0){
