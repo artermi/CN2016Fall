@@ -12,7 +12,7 @@ all: $(TARGET)
 
 %.o: %.c
 	@echo "making: " $@
-	@$(GCC) $< -lpthread -c $(CFLAG) 
+	@$(GCC) $< -pthread -c $(CFLAG) 
 
 clean:
 	rm -rf *.o *.c~ Makefile~ *.h~
@@ -22,8 +22,8 @@ clean:
 	done
 pj_server: $(SERVER_OBJ)
 	@echo "making: "$@
-	@$(GCC) -lpthread -o $@ $(CFLAG) $(SERVER_OBJ)
+	@$(GCC) -pthread -o $@ $(CFLAG) $(SERVER_OBJ)
 pj_client: $(CLIENT_OBJ)
 	@echo "making: "$@
-	@$(GCC) -lpthread -o $@ $(CFLAG) $(CLIENT_OBJ)
+	@$(GCC) -pthread -o $@ $(CFLAG) $(CLIENT_OBJ)
 
