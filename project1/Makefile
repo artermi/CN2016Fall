@@ -1,4 +1,4 @@
-TARGET = pj_server pj_client
+TARGET = server client
 GCC = gcc
 CFLAGS = -std=c99 -g 
 
@@ -20,10 +20,10 @@ clean:
 		echo "rm -rf $$bin"; \
 		rm -rf $$bin; \
 	done
-pj_server: $(SERVER_OBJ)
+server: $(SERVER_OBJ)
 	@echo "making: "$@
 	@$(GCC) -pthread -o $@ $(CFLAG) $(SERVER_OBJ)
-pj_client: $(CLIENT_OBJ)
+client: $(CLIENT_OBJ)
 	@echo "making: "$@
 	@$(GCC) -pthread -o $@ $(CFLAG) $(CLIENT_OBJ)
 

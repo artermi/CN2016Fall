@@ -37,8 +37,9 @@ int main(int argc, char* argv[]){
 		data[i].the_host = host[i];
 //		printf("thread_creating...\n");
 		pthread_create(&(working[i]),NULL,working_thread,(void*)&data[i]);
-		pthread_join(working[i],&ret);
 	}
+	for(int i = 0; i < host_num;i++)
+		pthread_join(working[i],&ret);
 	
 
 	return 0;
@@ -77,7 +78,7 @@ void* working_thread(void * data){
 	}
 	if(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) < 0){
 			perror("Rotten vagina!! connect fail");
-			exit(1);
+			return NULL;
 	}
 /* now we connected with server herald!!
 */
@@ -97,19 +98,20 @@ void* working_thread(void * data){
 	getsockopt(socket_fd,SOL_SOCKET,SO_ERROR,&so_error,&len);
 	if(so_error == 0){
 		printf("the address is open!!\n");
+
 		char buf[512] ="12345";
 		int nbytes;
 		if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
 			perror("write error");
-			exit(1);
-		}	
+			return NULL;
+		}
+		close(socket_fd);
+		return NULL;
 	}
 
 	if(select(socket_fd + 1,NULL,&fdset,NULL,&tv) != 1){
-		printf("timeout\n");
+		return NULL;
 	}
-
-	close(socket_fd);
 
 	return NULL;
 }
