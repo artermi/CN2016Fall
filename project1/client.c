@@ -60,6 +60,9 @@ void* working_thread(void * data){
 		perror("PUTA!! client socket break");
 		exit(1);
 	}
+//set non blocking
+	fcntl(socket_fd,F_SETFL,O_NONBLOCK);
+
 	struct sockaddr_in srv;
 	struct Servers_addr* server_addr= turn_to_server_struct(my_host);
 	srv.sin_family = AF_INET;
@@ -76,42 +79,39 @@ void* working_thread(void * data){
 		printf("IP Address:%s\n",sth_tmp);
 		srv.sin_addr.s_addr = inet_addr(sth_tmp);
 	}
-	if(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) < 0){
-			perror("Rotten vagina!! connect fail");
-			return NULL;
-	}
-/* now we connected with server herald!!
-*/
-//set the timer
+	connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv));
+//set timer
 	fd_set fdset;
 	struct timeval tv;
 	FD_ZERO(&fdset);
+	FD_SET(socket_fd,&fdset);
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	if(tout != 1000){
 		tv.tv_sec = 0;
 		tv.tv_usec = tout * 1000;
 	}
-
-	int so_error;
-	socklen_t len = sizeof(so_error);
-	getsockopt(socket_fd,SOL_SOCKET,SO_ERROR,&so_error,&len);
-	if(so_error == 0){
-		printf("the address is open!!\n");
-
+	
+	if(select(socket_fd + 1,NULL,&fdset,NULL,&tv) == 1){
+		int so_error;
+		socklen_t len = sizeof(so_error);
+		getsockopt(socket_fd,SOL_SOCKET,SO_ERROR,&so_error,&len);
 		char buf[512] ="12345";
 		int nbytes;
-		if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
-			perror("write error");
-			return NULL;
+		if(so_error == 0){
+			printf("the address is open!!\n");
+			if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
+				perror("write error");
+			}	
 		}
-		close(socket_fd);
-		return NULL;
+		read(socket_fd,buf,sizeof(buf));
+		printf("%s\n",buf);
+	}
+	else{
+		printf("time_out");
 	}
 
-	if(select(socket_fd + 1,NULL,&fdset,NULL,&tv) != 1){
-		return NULL;
-	}
+	close(socket_fd);
 
 	return NULL;
 }

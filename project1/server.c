@@ -49,7 +49,9 @@ int main(int argc, char** argv){
 	}
 	else{
 		printf("%s\n",buf);
+		write(new_fd,buf,sizeof(buf));
 	}
+	
 	close(new_fd);
 	close(socket_fd);
 	return 0;
