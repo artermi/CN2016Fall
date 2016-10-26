@@ -1,5 +1,7 @@
 #include"common.h"
 
+void *thread_for_client(void *data);
+
 int main(int argc, char** argv){
 	int my_port = atoi(argv[1]);
 	int socket_fd;
@@ -33,14 +35,29 @@ int main(int argc, char** argv){
 
 	struct sockaddr_in cli;//the client or sth else.
 	int cli_len = sizeof(cli);
-	int new_fd = accept(socket_fd, (struct sockaddr*) &cli,&cli_len);
-	
+	int new_fd;
+	while( new_fd = accept(socket_fd, (struct sockaddr*) &cli,&cli_len)){
+		pthread_t sniffer_thread;
+		int *new_sock = malloc(1);
+		*new_sock = new_fd;
+		if(pthread_create(&sniffer_thread,NULL,thread_for_client,(void*) new_sock) < 0){
+			perror("could not create thread");
+			return 1;
+		}
+	}
 	if(new_fd < 0){
 		perror("No accept!! 666 Satan!!!");
 		exit(1);
 	}
 	///to read_in the data
 
+	close(socket_fd);
+	return 0;
+}
+
+void *thread_for_client(void *data){
+	printf("into thread\n");
+	int new_fd = *(int*)data;
 	int nbytes;
 	char buf[512];
 	if(nbytes = read(new_fd,buf,sizeof(buf)) <0){
@@ -50,9 +67,7 @@ int main(int argc, char** argv){
 	else{
 		printf("%s\n",buf);
 		write(new_fd,buf,sizeof(buf));
-	}
-	
+	}	
 	close(new_fd);
-	close(socket_fd);
-	return 0;
+	return NULL;
 }
