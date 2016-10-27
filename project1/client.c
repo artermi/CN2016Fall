@@ -129,7 +129,7 @@ void* working_thread(void * data){
 		bzero(buf_read,sizeof(buf_read));
 		now_pack ++;
 	}
-
+	scanf("%d");
 	//	close(socket_fd);
 
 	return NULL;

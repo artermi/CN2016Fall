@@ -66,7 +66,7 @@ void *thread_for_client(void *data){
 	char client_addr[512];
 	len = sizeof(addr);
 	getpeername(new_fd,(struct sockaddr*)&addr,&len);
-//assune ipv4	
+//assume ipv4	
 	struct sockaddr_in *sokin = (struct sockaddr_in *)&addr;
 	int port = ntohs(sokin -> sin_port);
 	inet_ntop(AF_INET,&sokin->sin_addr,ipstr,sizeof(ipstr));
@@ -76,16 +76,15 @@ void *thread_for_client(void *data){
 	int nbytes;
 	char buf[512];
 	char buf_ret[512];
-	int k =3;
-	while(nbytes = read(new_fd,buf,sizeof(buf)) >=0 && k--){
+	
+	while(nbytes = read(new_fd,buf,sizeof(buf)) >= 0){
 		printf("%s\n",buf);
 		sprintf(buf_ret,"send back:%s",buf);
 		printf("%s\n",buf_ret);
 		write(new_fd,buf_ret,sizeof(buf_ret));
 		bzero(buf,sizeof(buf));
 		bzero(buf_ret,sizeof(buf_ret));
-//		sleep(10);
-	}	
+	}
 
 	close(new_fd);
 	return NULL;
