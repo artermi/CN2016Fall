@@ -60,14 +60,19 @@ void *thread_for_client(void *data){
 	int new_fd = *(int*)data;
 	int nbytes;
 	char buf[512];
-	if(nbytes = read(new_fd,buf,sizeof(buf)) <0){
-		perror("read in fail!!");
-		exit(1);
-	}
-	else{
+	char buf_ret[512];
+	int k =3;
+	sleep(10);
+	while(nbytes = read(new_fd,buf,sizeof(buf)) >=0 && k--){
 		printf("%s\n",buf);
-		write(new_fd,buf,sizeof(buf));
+		sprintf(buf_ret,"send back:%s",buf);
+		printf("%s\n",buf_ret);
+		write(new_fd,buf_ret,sizeof(buf_ret));
+		bzero(buf,sizeof(buf));
+		bzero(buf_ret,sizeof(buf_ret));
+//		sleep(10);
 	}	
+
 	close(new_fd);
 	return NULL;
 }
