@@ -62,7 +62,7 @@ void *thread_for_client(void *data){
 	char buf[512];
 	char buf_ret[512];
 	int k =3;
-	sleep(10);
+//	sleep(10);
 	while(nbytes = read(new_fd,buf,sizeof(buf)) >=0 && k--){
 		printf("%s\n",buf);
 		sprintf(buf_ret,"send back:%s",buf);
