@@ -62,6 +62,7 @@ void* working_thread(void * data){
 	}
 //set non blocking
 //	fcntl(socket_fd,F_SETFL,O_NONBLOCK);
+	
 	fd_set fdset;
 	struct timeval tv;
 	FD_ZERO(&fdset);
@@ -75,7 +76,7 @@ void* working_thread(void * data){
 	int now_pack = 1;
 	setsockopt(socket_fd,SOL_SOCKET,SO_RCVTIMEO,(char*)&tv,sizeof(tv));
 
-	struct sockaddr_in srv;
+	struct sockaddr_in srv;	
 	struct Servers_addr* server_addr= turn_to_server_struct(my_host);
 	srv.sin_family = AF_INET;
 	srv.sin_port = htons(server_addr -> port);
