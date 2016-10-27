@@ -58,18 +58,25 @@ int main(int argc, char** argv){
 void *thread_for_client(void *data){
 	printf("into thread\n");
 	int new_fd = *(int*)data;
+
+//get client info
+	socklen_t len;
+	struct sockaddr_storage addr;
+	char ipstr[512];
+	char client_addr[512];
+	len = sizeof(addr);
+	getpeername(new_fd,(struct sockaddr*)&addr,&len);
+//assune ipv4	
+	struct sockaddr_in *sokin = (struct sockaddr_in *)&addr;
+	int port = ntohs(sokin -> sin_port);
+	inet_ntop(AF_INET,&sokin->sin_addr,ipstr,sizeof(ipstr));
+	sprintf(client_addr,"%s:%d",ipstr,port);
+	printf("%s\n",client_addr);
+		
 	int nbytes;
 	char buf[512];
 	char buf_ret[512];
 	int k =3;
-//get client info
-	char client_info[512];
-	struct sockaddr_in sin;
-	socklen_t len = sizeof(sin);
-	if (getsockname(new_fd,(struct sockaddr*)&sin,&len) == -1)
-		perror("cannot get sock name");
-	sprintf(client_info,"%s:%d",inet_ntoa(sin.sin_addr),ntohs(sin.sin_port));
-	printf("%s\n",client_info);
 	while(nbytes = read(new_fd,buf,sizeof(buf)) >=0 && k--){
 		printf("%s\n",buf);
 		sprintf(buf_ret,"send back:%s",buf);
