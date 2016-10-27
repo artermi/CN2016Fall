@@ -62,7 +62,14 @@ void *thread_for_client(void *data){
 	char buf[512];
 	char buf_ret[512];
 	int k =3;
-//	sleep(10);
+//get client info
+	char client_info[512];
+	struct sockaddr_in sin;
+	socklen_t len = sizeof(sin);
+	if (getsockname(new_fd,(struct sockaddr*)&sin,&len) == -1)
+		perror("cannot get sock name");
+	sprintf(client_info,"%s:%d",inet_ntoa(sin.sin_addr),ntohs(sin.sin_port));
+	printf("%s\n",client_info);
 	while(nbytes = read(new_fd,buf,sizeof(buf)) >=0 && k--){
 		printf("%s\n",buf);
 		sprintf(buf_ret,"send back:%s",buf);
