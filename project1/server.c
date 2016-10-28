@@ -1,10 +1,12 @@
 #include"common.h"
+#include <signal.h>
 
 void *thread_for_client(void *data);
 
 int main(int argc, char** argv){
 	int my_port = atoi(argv[1]);
 	int socket_fd;
+	signal(SIGPIPE,SIG_IGN);
 	if( (socket_fd = socket(AF_INET, SOCK_STREAM,0)) < 0){
 		perror("You mother fucker, socket fail!!!");
 		exit(1);
@@ -36,6 +38,7 @@ int main(int argc, char** argv){
 	struct sockaddr_in cli;//the client or sth else.
 	int cli_len = sizeof(cli);
 	int new_fd;
+
 	while( new_fd = accept(socket_fd, (struct sockaddr*) &cli,&cli_len)){
 		pthread_t sniffer_thread;
 		int *new_sock = malloc(1);
@@ -56,7 +59,7 @@ int main(int argc, char** argv){
 }
 
 void *thread_for_client(void *data){
-	printf("into thread\n");
+//	printf("into thread\n");
 	int new_fd = *(int*)data;
 
 //get client info
@@ -71,17 +74,19 @@ void *thread_for_client(void *data){
 	int port = ntohs(sokin -> sin_port);
 	inet_ntop(AF_INET,&sokin->sin_addr,ipstr,sizeof(ipstr));
 	sprintf(client_addr,"%s:%d",ipstr,port);
-	printf("%s\n",client_addr);
+//	printf("%s\n",client_addr);
 		
 	int nbytes;
 	char buf[512];
 	char buf_ret[512];
 	
 	while(nbytes = read(new_fd,buf,sizeof(buf)) >= 0){
-		printf("%s\n",buf);
-		sprintf(buf_ret,"send back:%s",buf);
-		printf("%s\n",buf_ret);
-		write(new_fd,buf_ret,sizeof(buf_ret));
+		printf("recv from:%s,seq = %s\n",client_addr,buf);
+		sprintf(buf_ret,"%s",buf);
+//		printf("%s\n",buf_ret);
+		sleep(1);		
+		if(write(new_fd,buf_ret,sizeof(buf_ret)) < 1)
+				break;
 		bzero(buf,sizeof(buf));
 		bzero(buf_ret,sizeof(buf_ret));
 	}

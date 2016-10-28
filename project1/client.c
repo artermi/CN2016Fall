@@ -80,17 +80,20 @@ void* working_thread(void * data){
 	struct Servers_addr* server_addr= turn_to_server_struct(my_host);
 	srv.sin_family = AF_INET;
 	srv.sin_port = htons(server_addr -> port);
+	char* addr_n_port;
 	if(is_addr(server_addr -> addr)){
 		srv.sin_addr.s_addr = inet_addr(server_addr -> addr);
+		addr_n_port = my_host;
 	}
 	else{
 		struct hostent *he = gethostbyname(server_addr -> addr);
 		struct in_addr **addr_list;
 		addr_list = (struct in_addr **)he -> h_addr_list;
-		char sth_tmp[30];
-		sprintf(sth_tmp,"%s",inet_ntoa(*addr_list[0]));
-		printf("IP Address:%s\n",sth_tmp);
-		srv.sin_addr.s_addr = inet_addr(sth_tmp);
+		addr_n_port = (char*) malloc(30);
+		sprintf(addr_n_port,"%s",inet_ntoa(*addr_list[0]));
+//		printf("IP Address:%s\n",addr_n_port);
+		srv.sin_addr.s_addr = inet_addr(addr_n_port);
+		sprintf(addr_n_port,"%s:%d",addr_n_port,server_addr -> port);
 	}
 	if(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) <0){
 		printf("connect_fail.");
@@ -115,15 +118,21 @@ void* working_thread(void * data){
 		char buf_read[512];
 		int nbytes;
 		sprintf(buf,"%d",now_pack);
+		struct timeval start,end;
+		double elapsed;
+		gettimeofday(&start,NULL);
 		if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
 			perror("write error");
 		}
 
 		if( read(socket_fd,buf_read,sizeof(buf_read)) == -1){
-			printf("time_out\n");
+			printf("timeout when connect to %s,seq=%s\n",addr_n_port,buf);
 			return NULL;
 		}
-		printf("recv form server:%s\n",buf_read);
+		gettimeofday(&end,NULL);
+		elapsed = (double)(end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec)/1000000.0;
+
+		printf("recv form server:%s,%s,RTT=%d msec\n",addr_n_port,buf_read,(int)elapsed);
 
 		bzero(buf,sizeof(buf));
 		bzero(buf_read,sizeof(buf_read));
