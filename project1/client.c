@@ -1,7 +1,7 @@
 #include "common.h"
 #include <sys/time.h>
 #include <unistd.h>
-
+#include <signal.h>
 #define FOREVER 0
 
 int num = FOREVER;
@@ -29,6 +29,8 @@ int main(int argc, char* argv[]){
 	printf("number:%d timeout:%d\n",num,tout);
 //
 //===================thread========================
+	signal(SIGPIPE,SIG_IGN);
+
 	pthread_t working[host_num];
 	struct working_data data[host_num];
 	void *ret;
@@ -70,11 +72,12 @@ void* working_thread(void * data){
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	if(tout != 1000){
-		tv.tv_sec = 0;
-		tv.tv_usec = tout * 1000;
+		tv.tv_sec = tout / 1000;
+		tv.tv_usec = (tout % 1000)* 1000;
 	}
 	int now_pack = 1;
 	setsockopt(socket_fd,SOL_SOCKET,SO_RCVTIMEO,(char*)&tv,sizeof(tv));
+	setsockopt(socket_fd,SOL_SOCKET,SO_SNDTIMEO,(char*)&tv,sizeof(tv));
 
 	struct sockaddr_in srv;	
 	struct Servers_addr* server_addr= turn_to_server_struct(my_host);
@@ -95,9 +98,10 @@ void* working_thread(void * data){
 		srv.sin_addr.s_addr = inet_addr(addr_n_port);
 		sprintf(addr_n_port,"%s:%d",addr_n_port,server_addr -> port);
 	}
-	if(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) <0){
-		printf("connect_fail.");
-		return NULL;
+	while(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) <0){
+		printf("connect timeout when connect to %s,seq = %d\n",addr_n_port,now_pack);
+		now_pack ++;
+		nanosleep(&tv,NULL);
 	}
 //set timer
 /*
@@ -121,14 +125,25 @@ void* working_thread(void * data){
 		struct timeval start,end;
 		double elapsed;
 		gettimeofday(&start,NULL);
-		if((nbytes = write(socket_fd,buf,sizeof(buf))) < 0){
-			perror("write error");
+		if( write(socket_fd,buf,sizeof(buf)) < 0){
+			printf("timeout when send to %s,seq=%s\n",addr_n_port,buf);
+			nanosleep(&tv,NULL);
+			now_pack ++;
+			continue;
 		}
+		do{
+			if( read(socket_fd,buf_read,sizeof(buf_read)) < 0){
+				printf("timeout when recv from %s,seq=%s\n",addr_n_port,buf);
+				now_pack ++;
+				nanosleep(&tv,NULL);
 
-		if( read(socket_fd,buf_read,sizeof(buf_read)) == -1){
-			printf("timeout when connect to %s,seq=%s\n",addr_n_port,buf);
-			return NULL;
+				continue;
+			}
+			break;
 		}
+		while(atoi(buf_read) < now_pack);
+		
+		
 		gettimeofday(&end,NULL);
 		elapsed = (double)(end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec)/1000000.0;
 
@@ -138,8 +153,8 @@ void* working_thread(void * data){
 		bzero(buf_read,sizeof(buf_read));
 		now_pack ++;
 	}
-	scanf("%d");
-	//	close(socket_fd);
+//	scanf("%d");
+//		close(socket_fd);
 
 	return NULL;
 }
