@@ -1,10 +1,13 @@
 #include "common.h"
 
 struct Servers_addr* turn_to_server_struct(char* input){
+	char *hahaha = (char*)malloc(sizeof(char) * 50);
+	strcpy(hahaha,input);
 	struct Servers_addr *toret = (struct Servers_addr*) malloc(sizeof(struct Servers_addr));
-	toret -> addr = strtok(input,":");
+	toret -> addr = strtok(hahaha,":");
 	char *tmp = strtok(NULL,":");
 	toret -> port = atoi(tmp);
+
 	return toret;
 }
 

@@ -56,16 +56,16 @@ void* working_thread(void * data){
 	struct working_data* local_data = (struct working_data*) data;
 	int  pack_num = local_data -> pak_num;
 	char* my_host = local_data -> the_host;
+	int now_pack = 1;
 	printf("ping %s\n",my_host);
-
 	int socket_fd;
+hello:
 	if ((socket_fd = socket(AF_INET,SOCK_STREAM, 0))  < 0){
 		perror("PUTA!! client socket break");
 		exit(1);
 	}
 //set non blocking
 //	fcntl(socket_fd,F_SETFL,O_NONBLOCK);
-	
 	fd_set fdset;
 	struct timeval tv;
 	FD_ZERO(&fdset);
@@ -76,11 +76,9 @@ void* working_thread(void * data){
 		tv.tv_sec = tout / 1000;
 		tv.tv_usec = (tout % 1000)* 1000;
 	}
-	int now_pack = 1;
 	setsockopt(socket_fd,SOL_SOCKET,SO_RCVTIMEO,(char*)&tv,sizeof(tv));
 	setsockopt(socket_fd,SOL_SOCKET,SO_SNDTIMEO,(char*)&tv,sizeof(tv));
-
-	struct sockaddr_in srv;	
+	struct sockaddr_in srv;
 	struct Servers_addr* server_addr= turn_to_server_struct(my_host);
 	srv.sin_family = AF_INET;
 	srv.sin_port = htons(server_addr -> port);
@@ -95,17 +93,17 @@ void* working_thread(void * data){
 		addr_list = (struct in_addr **)he -> h_addr_list;
 		addr_n_port = (char*) malloc(30);
 		sprintf(addr_n_port,"%s",inet_ntoa(*addr_list[0]));
-//		printf("IP Address:%s\n",addr_n_port);
 		srv.sin_addr.s_addr = inet_addr(addr_n_port);
 		sprintf(addr_n_port,"%s:%d",addr_n_port,server_addr -> port);
 	}
-
 	while(pack_num -- ||num == FOREVER){
 		int conn_status = connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv));
 		if(conn_status < 0 && errno!= EISCONN){
 			printf("connect timeout when connect to %s,seq = %d\n",addr_n_port,now_pack);
 			now_pack ++;
 			nanosleep(&tv,NULL);
+
+//			goto hello;
 			continue;
 		}
 		char buf[512];
@@ -118,10 +116,13 @@ void* working_thread(void * data){
 		gettimeofday(&start,NULL);
 		if( write(socket_fd,buf,sizeof(buf)) < 0){
 			printf("timeout when send to %s,seq=%s\n",addr_n_port,buf);
+//			perror("write");
 			nanosleep(&tv,NULL);
 			now_pack ++;
-			
-			continue;
+			close(socket_fd);
+//			perror("close");
+			goto hello;
+//			continue;
 		}
 		if( read(socket_fd,buf_read,sizeof(buf_read)) < 0){
 			printf("timeout when recv from %s,seq=%s\n",addr_n_port,buf);
@@ -141,8 +142,6 @@ void* working_thread(void * data){
 		bzero(buf_read,sizeof(buf_read));
 		now_pack ++;
 	}
-//	scanf("%d");
-//		close(socket_fd);
 
 	return NULL;
 }

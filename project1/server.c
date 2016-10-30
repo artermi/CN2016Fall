@@ -82,7 +82,7 @@ void *thread_for_client(void *data){
 		printf("recv from:%s,seq = %s\n",client_addr,buf);
 		sprintf(buf_ret,"%s",buf);
 //		printf("%s\n",buf_ret);
-		sleep(1);		
+//		sleep(1);		
 		if(write(new_fd,buf_ret,sizeof(buf_ret)) < 1)
 				break;
 		bzero(buf,sizeof(buf));
