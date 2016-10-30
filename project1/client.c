@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
 #define FOREVER 0
 
 int num = FOREVER;
@@ -98,56 +99,43 @@ void* working_thread(void * data){
 		srv.sin_addr.s_addr = inet_addr(addr_n_port);
 		sprintf(addr_n_port,"%s:%d",addr_n_port,server_addr -> port);
 	}
-	while(connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv)) <0){
-		printf("connect timeout when connect to %s,seq = %d\n",addr_n_port,now_pack);
-		now_pack ++;
-		nanosleep(&tv,NULL);
-	}
-//set timer
-/*
-	if(select(socket_fd + 1,NULL,&fdset,NULL,&tv) == 1){
-		int so_error;
-		socklen_t len = sizeof(so_error);
-		getsockopt(socket_fd,SOL_SOCKET,SO_ERROR,&so_error,&len);
-		if(so_error == 0){
-			printf("the address is open!!\n");
-		}
-	}
-	else{
-		printf("time_out");
-	}
-*/
+
 	while(pack_num -- ||num == FOREVER){
+		int conn_status = connect(socket_fd,(struct sockaddr*) &srv,sizeof(srv));
+		if(conn_status < 0 && errno!= EISCONN){
+			printf("connect timeout when connect to %s,seq = %d\n",addr_n_port,now_pack);
+			now_pack ++;
+			nanosleep(&tv,NULL);
+			continue;
+		}
 		char buf[512];
 		char buf_read[512];
 		int nbytes;
 		sprintf(buf,"%d",now_pack);
 		struct timeval start,end;
 		double elapsed;
+		int readable = 1;
 		gettimeofday(&start,NULL);
 		if( write(socket_fd,buf,sizeof(buf)) < 0){
 			printf("timeout when send to %s,seq=%s\n",addr_n_port,buf);
 			nanosleep(&tv,NULL);
 			now_pack ++;
+			
 			continue;
 		}
-		do{
-			if( read(socket_fd,buf_read,sizeof(buf_read)) < 0){
-				printf("timeout when recv from %s,seq=%s\n",addr_n_port,buf);
-				now_pack ++;
-				nanosleep(&tv,NULL);
-
-				continue;
-			}
-			break;
+		if( read(socket_fd,buf_read,sizeof(buf_read)) < 0){
+			printf("timeout when recv from %s,seq=%s\n",addr_n_port,buf);
+			now_pack ++;
+			readable = 0;
+			//		break;
+			continue;
 		}
-		while(atoi(buf_read) < now_pack);
-		
 		
 		gettimeofday(&end,NULL);
+
 		elapsed = (double)(end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec)/1000000.0;
 
-		printf("recv form server:%s,%s,RTT=%d msec\n",addr_n_port,buf_read,(int)elapsed);
+		printf("recv form server:%s,seq=%s,RTT=%d msec\n",addr_n_port,buf_read,(int)elapsed);
 
 		bzero(buf,sizeof(buf));
 		bzero(buf_read,sizeof(buf_read));
