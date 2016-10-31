@@ -32,7 +32,7 @@ int main(int argc, char** argv){
 		perror("Yo mama so fat!! don't know the IP address!!");
 		exit(1);
 	}
-	sleep(10);
+//	sleep(10);
 	struct sockaddr_in cli;//the client or sth else.
 	int cli_len = sizeof(cli);
 	int new_fd;
@@ -82,7 +82,7 @@ void *thread_for_client(void *data){
 		printf("recv from:%s,seq = %s\n",client_addr,buf);
 		sprintf(buf_ret,"%s",buf);
 //		printf("%s\n",buf_ret);
-//		sleep(1);		
+//		for(int j = 0; j < 1000000000; j++);
 		if(write(new_fd,buf_ret,sizeof(buf_ret)) < 1)
 				break;
 		bzero(buf,sizeof(buf));
