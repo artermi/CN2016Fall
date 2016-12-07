@@ -24,7 +24,7 @@ clean:
 project2: $(PJ2_OBJ)
 	@echo "making: "$@
 	@$(GPP) $(CFLAG) $(PJ2_OBJ)
-trying:$(READFILE_OBJ)
+trying: $(READFILE_OBJ)
 	@echo "making: "$@
-	@$(GPP) $(CFLAG) $(trying)
+	@$(GPP) -o $@ $(CFLAG) $(trying)
 
