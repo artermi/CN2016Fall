@@ -1,0 +1,15 @@
+1.how to run:
+Use make to make all the files needed in this project.
+Or else, use 'make client' to generate the client execution file,
+and use 'make server' to generate the server execution file.
+Running the files with the spec's asking.
+
+2.What I do:
+client:
+receive/send message from/to multiple server
+support -n -t command
+print out accorfing to P.9
+translate host name into IP
+server:
+receive/send message from/to multiple client
+print output according to P.11

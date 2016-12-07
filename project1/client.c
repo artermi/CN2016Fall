@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
 //===================socket=========================
 //
 void* working_thread(void * data){
-	printf("inside thread!!\n");
+//	printf("inside thread!!\n");
 	struct working_data* local_data = (struct working_data*) data;
 	int  pack_num = local_data -> pak_num;
 	char* my_host = local_data -> the_host;
@@ -134,7 +134,7 @@ hello:
 		
 		gettimeofday(&end,NULL);
 
-		elapsed = (double)(end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec)/1000000.0;
+		elapsed = (double)(end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec)/1000.0;
 
 		printf("recv form server:%s,seq=%s,RTT=%d msec\n",addr_n_port,buf_read,(int)elapsed);
 
