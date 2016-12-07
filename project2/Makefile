@@ -4,7 +4,7 @@ CPPFLAGS = -O2 -std=c++11 -Wall
 
 
 PJ2_OBJ=
-READFILE_OBJ=read_input_file.o
+READFILE_OBJ=read_input_file.o test_read_input_file.cpp
 LIB=-lm -lbsm
 .PHONY:clean
 
