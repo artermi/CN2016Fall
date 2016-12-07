@@ -11,6 +11,9 @@ void read_input_file(string file_name,string &id,string &pass, vector<article> &
 	file.seekg(0,file.beg);
 
 	char *input_tmp = new char [length];
-	file.read(input,length);
-
+	file.read(input_tmp,length);
+	string input(input_tmp);
+	delete [] input_tmp;
+	
+	cout << input << endl;
 }
