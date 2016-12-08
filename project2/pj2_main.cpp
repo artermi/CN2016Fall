@@ -1,6 +1,11 @@
 #include "small_functions.h"
+#include <sys/socket.h>
 #include <vector>
 using namespace std;
+
+int socket_fd;
+
+
 
 int main(int argc, char **argv){
 	string ID,PASS;
@@ -13,12 +18,17 @@ int main(int argc, char **argv){
 	read_input_file(file_name,ID,PASS,POST,exit);
 	
 	//create socket
+	create_connection();
 	//login
-	//while still article
+	login_ptt(ID,PASS);
+	process_middle();
 	//goto board
-	//post article
-	//end
+	for(int i = 0; i < POST.length(), i++){
+		post_article(POST[i]);
+	}
 	//if need exit 
+	if(exit)
+		exit_ptt();
 	//exit
-
+	return 0;
 }
