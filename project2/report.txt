@@ -1,0 +1,35 @@
+project2
+student_id:b03902107
+name: 鄭格承
+
+what I do:
+(1)	read the file:
+	Use fstream to read the file.
+	After read in the file, parse the file with the tag linearly
+	(e.g. read a <ID>, store the words until meet the </ID>)
+(2)	create connection:
+	use socket connection, and the detail is trivial.
+(3)	send message:
+	the control codes go as follow:
+
+	(a) character or string:
+	    very simple, write the char/string in to the socket directly.
+
+	(b) "/n" and enter:
+	    send "/r".
+
+	(c) crtl_p,crtl_x:
+	    write 16 and 24.
+
+	(d) right,left:
+	    write {0x1b,0x5b,0x44} and {0x1b,0x5b,0x43} respectively.
+Bonus:
+(1) I can send chinese.
+(2) Type "./project2 DOLLAR" to the command line, can switch to P_dollar mode.
+    In this mode, it send one character in content per half second.
+    According to ptt's rule, every character earn 0.25P, and in every 2 sec,
+    user can get 1 P dollar at most.
+    Thus, P_dollar mode can send character in the rate of 1/0.5 char/sec. And
+    when send more than 4000 character, it send all the others word together.
+    it help the user get the most P dollar in the fastest speed.
+

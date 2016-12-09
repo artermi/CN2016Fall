@@ -210,7 +210,7 @@ void exit_ptt(){
 }
 
 void write_chinese(string content,bool is_content){
-	int total_dollar = 1000;
+	int total_dollar = 4000;
 	for(int i = 0; i < content.length(); i++){
 		cout << "writing: ";
 		if(content[i] >= 0){//anscii
