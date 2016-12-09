@@ -15,7 +15,7 @@ void read_input_file(string file_name,string &id,string &pass, vector<class arti
 	string input(input_tmp);
 	delete [] input_tmp;
 
-	cout << input << endl;
+//	cout << input << endl;
 //	wstring winput(input.begin(),input.end());
 	for(int i = 0; i < input.size(); i ++){
 		if(input.compare(i,4,"<ID>") == 0){
@@ -62,8 +62,9 @@ void read_input_file(string file_name,string &id,string &pass, vector<class arti
 			break;
 		}
 	}
-	cout << id <<endl;
-	cout << pass <<endl;
+	cout << "plantext" <<endl;
+	cout <<"ID: "<< id <<"no password"<<endl;
+//	cout << pass <<endl;
 	for(int i = 0; i < post.size(); i++){
 		cout << "*******" << endl;
 		cout << "board: " << post[i].board << endl;
