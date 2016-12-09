@@ -4,7 +4,7 @@ GPP = g++
 CPPFLAGS = -O2 -std=c++11 -Wall
 
 
-PJ2_OBJ=
+PJ2_OBJ=read_input_file.o pj2_main.o
 READFILE_OBJ=read_input_file.o test_read_input_file.o
 LIB=-lm -lbsm
 .PHONY:clean
@@ -24,7 +24,7 @@ clean:
 	done
 project2: $(PJ2_OBJ)
 	@echo "making: "$@
-	@$(GPP) $(CFLAG) $(PJ2_OBJ)
+	@$(GPP) -o $@ $(CFLAG) $(PJ2_OBJ)
 
 trying: $(READFILE_OBJ)
 	@echo "making: "$@
