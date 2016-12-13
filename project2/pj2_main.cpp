@@ -27,9 +27,7 @@ void exit_ptt();
 void write_chinese(string content,bool is_content);
 
 int main(int argc, char **argv){
-	string ID,PASS;
-	vector<article> POST;
-	bool exit;
+	vector<user> user_list;
 
 	string file_name = "P_input.txt";
 	if(argc > 1){
@@ -41,25 +39,27 @@ int main(int argc, char **argv){
 		}
 	}
 	cout << file_name <<endl;
-	read_input_file(file_name,ID,PASS,POST,exit);
+	read_input_file(user_list,file_name);
 
 	
 	//create socket
-	create_connection();
-	
-	//login
-	login_ptt(ID,PASS);
-	
-	process_middle();
-	//goto board
-	for(int i = 0; i < POST.size(); i++){
-		post_article(POST[i]);
+	for(int i = 0; i < user_list.size();i++){
+		create_connection();
+
+		//login
+		login_ptt(user_list[i].ID,user_list[i].PASS);
+
+		process_middle();
+		//goto board
+		for(int k = 0; k < user_list[i].ART_list.size(); k++){
+			post_article(user_list[i].ART_list[k]);
+		}
+		//if need exit 
+		if(user_list[i].exit)
+			exit_ptt();
+		//exit
+		close(socket_fd);
 	}
-	//if need exit 
-	if(exit)
-		exit_ptt();
-	//exit
-	close(socket_fd);
 	return 0;
 }
 void create_connection(){
