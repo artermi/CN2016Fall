@@ -1,6 +1,6 @@
 #include "read_input_file.h"
 
-void read_input_file(string file_name,string &id,string &pass, vector<class article> &post, bool &exit){
+void read_input_file(vector<user> &user_list,string file_name){
 	ifstream file(file_name.c_str(),ifstream::binary);
 	
 	if(!file){
@@ -18,61 +18,72 @@ void read_input_file(string file_name,string &id,string &pass, vector<class arti
 //	cout << input << endl;
 //	wstring winput(input.begin(),input.end());
 	for(int i = 0; i < input.size(); i ++){
-		if(input.compare(i,4,"<ID>") == 0){
-			i += 4;
-			while(input.compare(i,5,"</ID>")){
-				id += input[i];
-				i++;
+		user auser;
+		auser.exit = false;
+		for(;i < input.size();i++){
+			if(input.compare(i,4,"<ID>") == 0){
+				i += 4;
+				while(input.compare(i,5,"</ID>")){
+					auser.ID += input[i];
+					i++;
+				}
 			}
-		}
-		if(input.compare(i,6,"<PASS>") == 0){
-			i += 6;
-			while(input.compare(i,7,"</PASS>")){
-				pass += input[i];
-				i++;
+			if(input.compare(i,6,"<PASS>") == 0){
+				i += 6;
+				while(input.compare(i,7,"</PASS>")){
+					auser.PASS += input[i];
+					i++;
+				}
 			}
-		}
-		if(input.compare(i,7,"<BOARD>") == 0){
-			i += 7;
-			class  article new_article;
-			while(input.compare(i,8,"</BOARD>")){
-				new_article.board += input[i];
-				i++;
-			}
-			while(input.compare(i,3,"<P>"))
-				i++;
-			i+=3;
-			while(input.compare(i,4,"</P>")){
-				new_article.title += input[i];
-				i++;
-			}
-			while(input.compare(i,9,"<CONTENT>"))
-				i++;
-			i+=9;
-			while(input.compare(i,10,"</CONTENT>")){
-				new_article.content += input[i];
-				i++;
-			}
-			post.push_back(new_article);
+			if(input.compare(i,7,"<BOARD>") == 0){
+				i += 7;
+				class  article new_article;
+				while(input.compare(i,8,"</BOARD>")){
+					new_article.board += input[i];
+					i++;
+				}
+				while(input.compare(i,3,"<P>"))
+					i++;
+				i+=3;
+				while(input.compare(i,4,"</P>")){
+					new_article.title += input[i];
+					i++;
+				}
+				while(input.compare(i,9,"<CONTENT>"))
+					i++;
+				i+=9;
+				while(input.compare(i,10,"</CONTENT>")){
+					new_article.content += input[i];
+					i++;
+				}
+				auser.ART_list.push_back(new_article);
 
+			}
+			if(input.compare(i,6,"<EXIT>") == 0){
+				i += 6;
+				auser.exit = true;
+				break;
+			}
 		}
-		if(input.compare(i,6,"<EXIT>") == 0){
-			i += 6;
-			exit = true;
-			break;
-		}
+		if(auser.ID.size() > 0)
+			user_list.push_back(auser);
+
 	}
 	cout << "plantext" <<endl;
-	cout <<"ID: "<< id <<"no password"<<endl;
-//	cout << pass <<endl;
-	for(int i = 0; i < post.size(); i++){
-		cout << "*******" << endl;
-		cout << "board: " << post[i].board << endl;
-		cout << "title: " << post[i].title << endl;
-		cout << "content:" <<endl;
-		cout << post[i].content << endl;
+	for(int i = 0; i < user_list.size(); i++){
+		cout <<"ID: "<< user_list[i].ID <<" no password"<<endl;
+		//	cout << pass <<endl;
+		for(int k = 0; k < user_list[i].ART_list.size(); k++){
+			cout << "*******" << endl;
+			cout << "board: " << user_list[i].ART_list[k].board << endl;
+			cout << "title: " << user_list[i].ART_list[k].title << endl;
+			cout << "content:" <<endl;
+			cout << user_list[i].ART_list[k].content << endl;
+			cout << "*******" <<endl;
+		}
+		cout << user_list[i].exit <<endl;
+		cout << "==============="<<endl;
 	}
-	cout << exit <<endl;
 
 /*
 	for(int i=0; i < input.size();i++){
